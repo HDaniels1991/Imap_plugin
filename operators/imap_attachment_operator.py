@@ -17,13 +17,18 @@ class IMAPAttachmentOperator(BaseOperator):
     :type search_criteria: Dictionary.
     :param local_path: The local directory to save attachments.
     :type local_path: String.
+    :param file_name: An optional new name for the saved attachment.
+    :type file_name: String.
     '''
+    template_fields = ['file_name']
+
     @apply_defaults
     def __init__(self,
                  imap_conn_id,
                  mailbox,
                  search_criteria={},
                  local_path='',
+                 file_name='',
                  *args,
                  **kwargs):
         super().__init__(*args, **kwargs)
@@ -31,6 +36,7 @@ class IMAPAttachmentOperator(BaseOperator):
         self.mailbox = mailbox
         self.search_criteria = search_criteria
         self.local_path = local_path
+        self.file_name = file_name
 
     def execute(self, context):
         yesterday = context.get('yesterday_ds')
@@ -49,6 +55,6 @@ class IMAPAttachmentOperator(BaseOperator):
             mailbox=self.mailbox,
             search_criteria=self.search_criteria)
         if mail_id:
-            imap_hook.get_mail_attachment(mail_id, self.local_path)
-
-            
+            imap_hook.get_mail_attachment(mail_id,
+                                          self.local_path,
+                                          self.file_name)

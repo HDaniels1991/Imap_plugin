@@ -36,6 +36,7 @@ op = IMAPAttachmentOperator(
     search_criteria={"FROM": "noreply@example.com",
                      "SUBJECT": "daily_report"},
     local_path='',
+    file_name='',
     task_id='imap_example')
 
 op.execute(context={'yesterday_ds': '2019-08-04'})

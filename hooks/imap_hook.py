@@ -60,13 +60,15 @@ class IMAPHook(BaseHook):
         mail_id = mail_ids[0]
         return mail_id
 
-    def get_mail_attachment(self, mail_id, local_path=''):
+    def get_mail_attachment(self, mail_id, local_path='', file_name=''):
         '''
         Downloads the attachements of a given email.
         :param mail_id: The id of the email in the mailbox.
         :type mail_id: string
         :param local_path: the local directory to store the attachments.
         :type local_path: string
+        :param file_name: An optional new name for the saved attachment.
+        :type file_name: String.
         '''
         typ, data = self.mail.fetch(mail_id, '(RFC822)')
         raw_email = data[0][1]
@@ -83,6 +85,8 @@ class IMAPHook(BaseHook):
             if fileName:
                 logging.info('Attachment called {} found'.format(fileName))
                 filePath = os.path.join(local_path, fileName)
+                if file_name:
+                    filePath = os.path.join(local_path, file_name)
                 outdir = os.path.dirname(filePath)
                 if outdir:
                     os.makedirs(outdir, exist_ok=True)
