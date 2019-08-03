@@ -2,6 +2,7 @@ from airflow.hooks.base_hook import BaseHook
 import imaplib
 import email
 import os
+import logging
 
 
 class IMAPHook(BaseHook):
@@ -21,7 +22,7 @@ class IMAPHook(BaseHook):
         '''
         mail = imaplib.IMAP4_SSL(self.connection.host)
         # Login to your mail
-        mail.login(user=self.connection.user,
+        mail.login(user=self.connection.login,
                    password=self.connection.password)
         self.mail = mail
 
@@ -48,18 +49,18 @@ class IMAPHook(BaseHook):
         mail_ids = data[0].split()
         # check we've found mail:
         if not mail_ids:
-            print('No mail found')
-            return mail_ids[0]
+            logging.info('No mail found')
+            return ''
         # check we've only returned one item:
         if len(data[0].split()) > 1:
-            print('Multiple emails found', 'Using latest email')
+            logging.info('Multiple emails found, Using latest email')
             mail_id = mail_ids[-1]
             return mail_id
-        print('Single email found')
-        mail_id = mail_id[0]
+        logging.info('Single email found')
+        mail_id = mail_ids[0]
         return mail_id
 
-    def get_mail_attachments(self, mail_id, local_path=''):
+    def get_mail_attachment(self, mail_id, local_path=''):
         '''
         Downloads the attachements of a given email.
         :param mail_id: The id of the email in the mailbox.
@@ -80,7 +81,7 @@ class IMAPHook(BaseHook):
                 continue
             fileName = part.get_filename()
             if fileName:
-                print('Attachment called {} found'.format(fileName))
+                logging.info('Attachment called {} found'.format(fileName))
                 filePath = os.path.join(local_path, fileName)
                 outdir = os.path.dirname(filePath)
                 if outdir:
@@ -90,5 +91,5 @@ class IMAPHook(BaseHook):
                     fp.write(part.get_payload(decode=True))
                     fp.close()
                 if os.path.isfile(filePath):
-                    print('Successfully downloaded attachment to {}'.format(
+                    logging.info('Successfully downloaded attachment to {}'.format(
                         filePath))
