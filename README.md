@@ -13,11 +13,34 @@ To create an IMAP connection using the Airflow UI you need to open the interface
 
 ## Hooks
 
+The hook is called IMAPHook and can be instantiated with the relevant Airflow connection id.
 
+The hook has a series of methods to connect to a mail server, search for a specific email and download its attachments.
+
+```python
+from airflow.hooks import IMAPHook
+
+hook = IMAPHook(imap_conn_id='imap_default')
+```
 
 ## Operators
 
+### IMAPAttachmentOperator
 
+This operator downloads the attachement of an email recieved the day before the execution date within the airflow context and saves it to a local directory.
+
+```python
+op = IMAPAttachmentOperator(
+    imap_conn_id='imap_default',
+    mailbox='mail_test',
+    search_criteria={"FROM": "noreply@example.com",
+                     "SUBJECT": "daily_report"},
+    local_path='',
+    task_id='imap_example')
+
+op.execute(context={'yesterday_ds': '2019-08-04'})
+
+```
 
 ## Authors:
 

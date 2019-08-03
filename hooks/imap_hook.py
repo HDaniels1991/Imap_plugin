@@ -91,5 +91,6 @@ class IMAPHook(BaseHook):
                     fp.write(part.get_payload(decode=True))
                     fp.close()
                 if os.path.isfile(filePath):
-                    logging.info('Successfully downloaded attachment to {}'.format(
-                        filePath))
+                    logging.info(
+                        'Successfully downloaded attachment to {}'.format(
+                            filePath))
