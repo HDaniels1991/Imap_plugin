@@ -22,9 +22,12 @@ class IMAPHook(BaseHook):
         '''
         mail = imaplib.IMAP4_SSL(self.connection.host)
         # Login to your mail
-        mail.login(user=self.connection.login,
-                   password=self.connection.password)
-        self.mail = mail
+        typ, accountDetails = mail.login(user=self.connection.login,
+                                         password=self.connection.password)
+        if typ != 'OK':
+            logging.info('Sign in failed')
+        else:
+            self.mail = mail
 
     def find_mail(self, mailbox, search_criteria={}):
         '''
